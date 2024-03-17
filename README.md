@@ -17,6 +17,11 @@ The Android Security Toolkit is a bash script designed to assist in various secu
 - Show Exploitable Activity: Identify potentially exploitable activities within APK files.
 - Webview Exploit: Launch a webview activity with specified parameters, potentially useful for testing web vulnerabilities.
 
+## Screenshot
+
+![Screenshot](https://github.com/nahid0x1/nahid0x1.github.io/blob/main/image/android-security-toolkit.png?raw=true)
+
+
 ## Compatibility
 
 The Android Security Toolkit is compatible with both Linux and macOS operating systems. It relies on standard bash scripting and commonly used tools for Android security testing.
@@ -25,4 +30,9 @@ The Android Security Toolkit is compatible with both Linux and macOS operating s
 ## Disclaimer
 
 This toolkit is intended for educational and security testing purposes only. It should be used responsibly and with appropriate permissions. The authors and contributors of this toolkit are not responsible for any misuse or damage caused by its usage. Always ensure that you have proper authorization before conducting security testing on any device or application.
+
+
+## Author
+
+- [@nahid0x1](https://www.linkedin.com/in/nahid0x1)
 
