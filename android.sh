@@ -42,7 +42,7 @@ function menu(){
     echo -e "\033[0;37m6. \033[0;32mRun Activity"
     echo -e "\033[0;37m7. \033[0;32mShow Exploitable Activity"
     echo -e "\n\033[0;37m(connect)      (disconnect)"
-    echo -e "\n\033[0;33mInstall Requerments for:"
+    echo -e "\n\033[0;33mInstall requirements for:"
     echo -e "$> Mac"
     echo "$> Linux"
     echo -e "\033[0;32m"
