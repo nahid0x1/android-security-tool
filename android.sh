@@ -1,5 +1,50 @@
 #!/bin/bash
 
+# Function to determine the operating system
+function detect_os() {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo "linux"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "mac"
+    else
+        echo "unknown"
+    fi
+}
+
+# Function to check if the script is executed with root privileges
+function check_root() {
+    if [ "$(id -u)" -ne 0 ]; then
+        echo -e "\033[0;31mThis script requires root privileges for installation."
+        exit 1
+    fi
+}
+
+# Install the script to appropriate location based on OS
+function install_script() {
+    os=$(detect_os)
+    if [ "$os" == "mac" ]; then
+        rm -rf /usr/local/bin/androkit
+        cp "$0" /usr/local/bin/androkit
+        chmod +x /usr/local/bin/androkit
+    elif [ "$os" == "linux" ]; then
+        rm -rf /bin/androkit
+        cp "$0" /bin/androkit
+        chmod +x /bin/androkit
+    else
+        echo -e "\033[0;31mUnsupported operating system."
+        exit 1
+    fi
+}
+
+# Check if --install option is provided
+if [ "$1" == "--install" ]; then
+    check_root
+    install_script
+    echo -e "\033[0;32mScript installed successfully."
+    echo "run: androkit"
+    exit 0
+fi
+
 # Connect to your android
 if [ $# -eq 1 ]; then
     if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+$ ]]; then
@@ -29,7 +74,7 @@ path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
 function banner(){
     clear
     echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.1"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.3"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -56,6 +101,7 @@ function menu(){
     echo -e "\033[0;37m6. \033[0;32mRun Activity"
     echo -e "\033[0;37m7. \033[0;32mShow Exploitable Activity"
     echo -e "\033[0;37m8. \033[0;32mWebview Exploit"
+    echo -e "\033[0;37m9. \033[0;32mInstall APK To Android"
     echo -e "\n\033[0;37m(connect)      (disconnect)"
     echo -e "\n\033[0;33mInstall requirement for:"
     echo -e "$> Mac"
@@ -68,6 +114,7 @@ function menu(){
 while true; do
     menu
 
+##################################################################
     # Show all the package names
     if [ "$input" == "1" ]; then
         banner
@@ -169,6 +216,16 @@ while true; do
         echo -e " "
         read -p "Press ENTER to Clear" enter
 
+    # install apk to android
+    elif [ "$input" == "9" ]; then
+        banner
+        read -p "[$model] APK file> " apk
+        banner
+        adb install $apk
+        echo "App Installed"
+        read -p "Press ENTER to Clear" enter
+
+##############################################################
     # Disconnect
     elif [[ "$input" == disconnect* ]]; then
         ip_port=$(echo "$input" | cut -d' ' -f2)
