@@ -74,7 +74,7 @@ path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
 function banner(){
     clear
     echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.3"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v1.5"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -93,16 +93,17 @@ function banner(){
 # Main Menu
 function menu(){
     banner
-    echo -e "\033[0;37m1. \033[0;32mAll Packages Names"
-    echo -e "\033[0;37m2. \033[0;32mShow Installed App Packages"
-    echo -e "\033[0;37m3. \033[0;32mExtract APK"
-    echo -e "\033[0;37m4. \033[0;32mDecompile APK [JADX]"
-    echo -e "\033[0;37m5. \033[0;32mDecompile APK [Apktool]"
-    echo -e "\033[0;37m6. \033[0;32mRun Activity"
-    echo -e "\033[0;37m7. \033[0;32mShow Exploitable Activity"
-    echo -e "\033[0;37m8. \033[0;32mWebview Exploit"
-    echo -e "\033[0;37m9. \033[0;32mInstall APK To Android"
+    echo -e "\033[0;37m01. \033[0;32mAll Packages Names"
+    echo -e "\033[0;37m02. \033[0;32mShow Installed App Packages"
+    echo -e "\033[0;37m03. \033[0;32mExtract APK"
+    echo -e "\033[0;37m04. \033[0;32mDecompile APK [JADX]"
+    echo -e "\033[0;37m05. \033[0;32mDecompile APK [Apktool]"
+    echo -e "\033[0;37m06. \033[0;32mRun Activity"
+    echo -e "\033[0;37m07. \033[0;32mShow Exploitable Activity"
+    echo -e "\033[0;37m08. \033[0;32mWebview Exploit"
+    echo -e "\033[0;37m09. \033[0;32mInstall APK To Android"
     echo -e "\n\033[0;37m(connect)      (disconnect)"
+    echo -e "\033[0;37m(devices)      (root)"
     echo -e "\n\033[0;33mInstall requirement for:"
     echo -e "$> Mac"
     echo "$> Linux"
@@ -207,15 +208,7 @@ while true; do
         adb shell am start -n "$activity_name" --es "$string" "$website"
         echo -e " "
         read -p "Press ENTER to Clear" enter
-
-    # Connect
-    elif [[ "$input" == connect* ]]; then
-        ip_port=$(echo "$input" | cut -d' ' -f2)
-        banner
-        adb connect "$ip_port"
-        echo -e " "
-        read -p "Press ENTER to Clear" enter
-
+    
     # install apk to android
     elif [ "$input" == "9" ]; then
         banner
@@ -225,7 +218,17 @@ while true; do
         echo "App Installed"
         read -p "Press ENTER to Clear" enter
 
-##############################################################
+
+
+###############Script Function######################
+    # Connect
+    elif [[ "$input" == connect* ]]; then
+        ip_port=$(echo "$input" | cut -d' ' -f2)
+        banner
+        adb connect "$ip_port"
+        echo -e " "
+        read -p "Press ENTER to Clear" enter
+
     # Disconnect
     elif [[ "$input" == disconnect* ]]; then
         ip_port=$(echo "$input" | cut -d' ' -f2)
@@ -245,6 +248,22 @@ while true; do
         brew install openjdk
         pip3 install frida-tools
         pip3 install objection
+
+    # show devices
+    elif [[ "$input" == devices* ]]; then
+        banner
+        echo -e "\033[0;33m\n"
+        adb devices
+        echo -e "\033[0;32m\n"
+        read -p "Press ENTER to Clear" enter
+
+    # android root check
+   elif [[ "$input" == root* ]]; then
+        banner
+        echo -e "\033[0;33m"
+        adb root
+        echo -e "\033[0;32m\n"
+        read -p "Press ENTER to Clear" enter
 
     # Wrong input
     else
