@@ -45,6 +45,49 @@ For Linux Distribution
   androkit <IP>:<PORT>
 ```
 
+
+## Interface
+
+```
+⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v3.0
+⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿
+⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿
+⣿⠿⢿⣿⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⣿⡿⠿⣿  @nahid0x1
+⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸
+⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸
+⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸
+⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸
+⣧⣤⣤⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣤⣤⣼
+⣿⣿⣿⣿⣶⣤⡄⠀⠀⠀⣤⣤⣤⠀⠀⠀⢠⣤⣴⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⣿⣿⣿⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣤⣤⣴⣿⣿⣿⣦⣤⣤⣾⣿⣿⣿⣿⣿⣿
+
+Selected Android [Galaxy S4]
+
+01. All Packages Names             10. Setup Frida-Server To Android
+02. Show Installed App Packages    11. Start Frida-Server [Android]
+03. Extract APK                    12. SSL Pinning Bypass [Frida]
+04. Decompile APK [JADX]
+05. Decompile APK [Apktool]
+06. Run Activity
+07. Show Exploitable Activity
+08. Webview Exploit
+09. Install APK To Android
+
+(connect)      (disconnect)
+(devices)      (root)
+
+Install requirement for:
+$> Mac
+$> Linux
+
+[Galaxy S4] Console>
+
+```
+
+
+
 ## Compatibility
 
 The Android Security Toolkit is compatible with both Linux and macOS operating systems. It relies on standard bash scripting and commonly used tools for Android security testing.
