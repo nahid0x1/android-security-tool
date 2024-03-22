@@ -1,6 +1,23 @@
 #!/bin/bash
 
-# Function to determine the operating system
+# Colors
+WHITE='\033[0;37m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Containers
+VERSION="3.1"
+model=$(adb shell getprop ro.product.model)
+arch=$(adb shell getprop ro.product.cpu.abi)
+path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
+frida_version="16.2.1" # you can change the version
+frida_arm64="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-arm64.xz" # URL of the frida server
+frida_x86="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-x86.xz" # URL of the frida server
+
+#operating system detect
 function detect_os() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         echo "linux"
@@ -11,10 +28,10 @@ function detect_os() {
     fi
 }
 
-# Function to check if the script is executed with root privileges
+#root privileges check
 function check_root() {
     if [ "$(id -u)" -ne 0 ]; then
-        echo -e "\033[0;31mThis script requires root privileges for installation."
+        echo -e "${RED}This script requires root privileges for installation."
         exit 1
     fi
 }
@@ -31,7 +48,7 @@ function install_script() {
         cp "$0" /bin/androkit
         chmod +x /bin/androkit
     else
-        echo -e "\033[0;31mUnsupported operating system."
+        echo -e "${RED}Unsupported operating system."
         exit 1
     fi
 }
@@ -40,8 +57,24 @@ function install_script() {
 if [ "$1" == "--install" ]; then
     check_root
     install_script
-    echo -e "\033[0;32mScript installed successfully."
+    echo -e "${GREEN}Script installed successfully."
     echo "run: androkit"
+    exit 0
+fi
+
+# Check if command line argument for installation is provided
+if [ "$1" == "--install-mac" ]; then
+    brew install apktool jadx android-platform-tools openjdk
+    pip3 install frida frida-tools objection
+    echo -e "${GREEN}Requirements installed successfully for macOS."
+    exit 0
+fi
+
+if [ "$1" == "--install-linux" ]; then
+    check_root
+    apt install -y python3 openjdk apktool jadx adb
+    pip3 install frida frida-tools objection
+    echo -e "${GREEN}Requirements installed successfully for Linux."
     exit 0
 fi
 
@@ -66,19 +99,12 @@ fi
 
 
 
-# Containers
-model=$(adb shell getprop ro.product.model)
-arch=$(adb shell getprop ro.product.cpu.abi)
-path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
-frida_version="16.2.1" # you can change the version
-frida_arm64="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-arm64.xz" # URL of the frida server
-frida_x86="https://github.com/frida/frida/releases/download/"$frida_version"/frida-server-"$frida_version"-android-x86.xz" # URL of the frida server
 
 #BANNER
 function banner(){
     clear
-    echo -e "\033[0;32m"
-    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v3.0"
+    echo -e "${GREEN}"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v${VERSION}"
     echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
@@ -91,27 +117,27 @@ function banner(){
     echo "⣿⣿⣿⣿⣶⣤⡄⠀⠀⠀⣤⣤⣤⠀⠀⠀⢠⣤⣴⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⣿⣿⣿⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿"
     echo "⣿⣿⣿⣿⣿⣿⣿⣤⣤⣴⣿⣿⣿⣦⣤⣤⣾⣿⣿⣿⣿⣿⣿"
-    echo -e "\n\033[0;32mSelected Android [\033[0;37m$model\033[0;32m]\n"
+    echo -e "\n${GREEN}Selected Android [${WHITE}$model${GREEN}]\n"
 }
 
 # Main Menu
 function menu(){
     banner
-    echo -e "\033[0;37m01. \033[0;32mAll Packages Names             \033[0;37m10. \033[0;32mSetup Frida-Server To Android"
-    echo -e "\033[0;37m02. \033[0;32mShow Installed App Packages    \033[0;37m11. \033[0;32mStart Frida-Server [Android]"
-    echo -e "\033[0;37m03. \033[0;32mExtract APK                    \033[0;37m12. \033[0;32mSSL Pinning Bypass [Frida]"
-    echo -e "\033[0;37m04. \033[0;32mDecompile APK [JADX]"
-    echo -e "\033[0;37m05. \033[0;32mDecompile APK [Apktool]"
-    echo -e "\033[0;37m06. \033[0;32mRun Activity"
-    echo -e "\033[0;37m07. \033[0;32mShow Exploitable Activity"
-    echo -e "\033[0;37m08. \033[0;32mWebview Exploit"
-    echo -e "\033[0;37m09. \033[0;32mInstall APK To Android"
-    echo -e "\n\033[0;37m(connect)      (disconnect)"
-    echo -e "\033[0;37m(devices)      (root)"
-    echo -e "\n\033[0;33mInstall requirement for:"
+    echo -e "${WHITE}01. ${GREEN}All Packages Names             ${WHITE}10. ${GREEN}Setup Frida-Server To Android"
+    echo -e "${WHITE}02. ${GREEN}Show Installed App Packages    ${WHITE}11. ${GREEN}Start Frida-Server [Android]"
+    echo -e "${WHITE}03. ${GREEN}Extract APK                    ${WHITE}12. ${GREEN}SSL Pinning Bypass [Frida]"
+    echo -e "${WHITE}04. ${GREEN}Decompile APK [JADX]"
+    echo -e "${WHITE}05. ${GREEN}Decompile APK [Apktool]"
+    echo -e "${WHITE}06. ${GREEN}Run Activity"
+    echo -e "${WHITE}07. ${GREEN}Show Exploitable Activity"
+    echo -e "${WHITE}08. ${GREEN}Webview Exploit"
+    echo -e "${WHITE}09. ${GREEN}Install APK To Android"
+    echo -e "\n${WHITE}(connect)      (disconnect)"
+    echo -e "${WHITE}(devices)      (root)"
+    echo -e "\n${YELLOW}Install requirement for:"
     echo -e "$> Mac"
     echo "$> Linux"
-    echo -e "\033[0;32m"
+    echo -e "${GREEN}"
     read -p "[$model] Console> " input
 }
 
@@ -188,7 +214,7 @@ while true; do
         while IFS= read -r line; do
             activity=$(echo "$line" | grep -o 'android:name="[^\"]*' | sed 's/android:name="//')
             if [ ! -z "$activity" ]; then
-                echo -e "\033[0;32mActivity name: \033[0;35m$activity \033[0;31m[True]"
+                echo -e "${GREEN}Activity name: \033[0;35m$activity ${RED}[True]"
             fi
         done <<< "$grep_result"
         echo -e " "
@@ -382,7 +408,8 @@ while true; do
         adb disconnect "$ip_port"
         echo -e " "
         read -p "Press ENTER to Clear" enter
-
+    
+    #requirement install
     elif [ "$input" == "linux" ]; then
         sudo apt install -y python3 openjdk apktool jadx adb
         pip3 install frida
@@ -400,17 +427,17 @@ while true; do
     # show devices
     elif [[ "$input" == devices* ]]; then
         banner
-        echo -e "\033[0;33m\n"
+        echo -e "${YELLOW}\n"
         adb devices
-        echo -e "\033[0;32m\n"
+        echo -e "${GREEN}\n"
         read -p "Press ENTER to Clear" enter
 
     # android root check
    elif [[ "$input" == root* ]]; then
         banner
-        echo -e "\033[0;33m"
+        echo -e "${YELLOW}"
         adb root
-        echo -e "\033[0;32m\n"
+        echo -e "${GREEN}\n"
         read -p "Press ENTER to Clear" enter
 
     # Wrong input
