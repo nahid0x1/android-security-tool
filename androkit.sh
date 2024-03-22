@@ -9,7 +9,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Containers
-VERSION="3.1"
+VERSION="3.2"
 model=$(adb shell getprop ro.product.model)
 arch=$(adb shell getprop ro.product.cpu.abi)
 path="/Users/mdnahidalam/Desktop/android_security/target/" # Set your path
@@ -53,6 +53,95 @@ function install_script() {
     fi
 }
 
+#BANNER
+function usage_banner(){
+    clear
+    echo -e "${GREEN}"
+    echo "⣿⣿⣿⣿⣿⣿⣧⠻⣿⣿⠿⠿⠿⢿⣿⠟⣼⣿⣿⣿⣿⣿⣿ v${VERSION}"
+    echo "⣿⣿⣿⣿⣿⣿⠟⠃⠁⠀⠀⠀⠀⠀⠀⠘⠻⣿⣿⣿⣿⣿⣿"
+    echo "⣿⣿⣿⣿⡿⠃⠀⣴⡄⠀⠀⠀⠀⠀⣴⡆⠀⠘⢿⣿⣿⣿⣿"
+    echo "⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿"
+    echo "⣿⠿⢿⣿⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⠶⣿⡿⠿⣿  @nahid0x1"
+    echo "⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸"
+    echo "⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸"
+    echo "⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸"
+    echo "⡇⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢸"
+    echo "⣧⣤⣤⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣤⣤⣼"
+    echo "⣿⣿⣿⣿⣶⣤⡄⠀⠀⠀⣤⣤⣤⠀⠀⠀⢠⣤⣴⣿⣿⣿⣿"
+    echo "⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⣿⣿⣿⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿"
+    echo "⣿⣿⣿⣿⣿⣿⣿⣤⣤⣴⣿⣿⣿⣦⣤⣤⣾⣿⣿⣿⣿⣿⣿"
+}
+
+# help
+if [ "$1" == "--help" ]; then
+    usage_banner
+    echo -e "\n${WHITE}RUN: androkit"
+    echo -e "${WHITE}Usage: androkit <IP>:<PORT>\n"
+    echo -e "   ${GREEN}--install ${WHITE}to setup the script in environment"
+    echo -e "   ${GREEN}--install-mac ${WHITE}to install the requirement for macOS"
+    echo -e "   ${GREEN}--install-linux ${WHITE}to install the requirement for linux-distribution"
+    echo -e "   ${GREEN}--report ${WHITE}to describe issue with us"
+    echo -e "\n${WHITE}Functionality:\n"
+    echo -e "   ${GREEN}Show all Packages: ${WHITE}Lists all installed packages on the device."
+    echo -e "   ${GREEN}Show Installed App Packages: ${WHITE}Displays installed application packages."
+    echo -e "   ${GREEN}Extract APK: ${WHITE}Extracts APK files from installed applications."
+    echo -e "   ${GREEN}Decompile APK: ${WHITE}Decompiles APK files using JADX or Apktool."
+    echo -e "   ${GREEN}Run Activity: ${WHITE}Executes activities of specified applications."
+    echo -e "   ${GREEN}Show Exploitable Activity: ${WHITE}Identifies potentially exploitable activities."
+    echo -e "   ${GREEN}Webview Exploit: ${WHITE}Explores WebView vulnerabilities."
+    echo -e "   ${GREEN}Install APK to ${WHITE}Android: Installs APK files to the Android device."
+    echo -e "   ${GREEN}Setup Frida-Server to Android: ${WHITE}Sets up Frida server for dynamic analysis."
+    echo -e "   ${GREEN}Start Frida-Server [Android]: ${WHITE}Starts the Frida server on the Android device."
+    echo -e "   ${GREEN}SSL Pinning Bypass [Frida]: ${WHITE}Bypasses SSL pinning using Frida."
+    echo -e "\n${WHITE}Additional Commands:\n"
+    echo -e "   ${GREEN}connect <IP>:<PORT>: ${WHITE}Connects to an Android device."
+    echo -e "   ${GREEN}disconnect <IP>:<PORT>: ${WHITE}Disconnects from an Android device."
+    echo -e "   ${GREEN}devices: ${WHITE}Lists connected Android devices."
+    echo -e "   ${GREEN}root: ${WHITE}Checks if the Android device is rooted."
+    echo -e "   ${GREEN}mac: ${WHITE}Installs requirements for macOS."
+    echo -e "   ${GREEN}linux: ${WHITE}Installs requirements for Linux."
+
+    exit 0
+fi
+
+# help
+if [ "$1" == "--h" ]; then
+    usage_banner
+    echo -e "\n${WHITE}RUN: androkit"
+    echo -e "${WHITE}Usage: androkit <IP>:<PORT>\n"
+    echo -e "   ${GREEN}--install ${WHITE}to setup the script in environment"
+    echo -e "   ${GREEN}--install-mac ${WHITE}to install the requirement for macOS"
+    echo -e "   ${GREEN}--install-linux ${WHITE}to install the requirement for linux-distribution"
+    echo -e "   ${GREEN}--report ${WHITE}to describe issue with us"
+    echo -e "\n${WHITE}Functionality:\n"
+    echo -e "   ${GREEN}Show all Packages: ${WHITE}Lists all installed packages on the device."
+    echo -e "   ${GREEN}Show Installed App Packages: ${WHITE}Displays installed application packages."
+    echo -e "   ${GREEN}Extract APK: ${WHITE}Extracts APK files from installed applications."
+    echo -e "   ${GREEN}Decompile APK: ${WHITE}Decompiles APK files using JADX or Apktool."
+    echo -e "   ${GREEN}Run Activity: ${WHITE}Executes activities of specified applications."
+    echo -e "   ${GREEN}Show Exploitable Activity: ${WHITE}Identifies potentially exploitable activities."
+    echo -e "   ${GREEN}Webview Exploit: ${WHITE}Explores WebView vulnerabilities."
+    echo -e "   ${GREEN}Install APK to ${WHITE}Android: Installs APK files to the Android device."
+    echo -e "   ${GREEN}Setup Frida-Server to Android: ${WHITE}Sets up Frida server for dynamic analysis."
+    echo -e "   ${GREEN}Start Frida-Server [Android]: ${WHITE}Starts the Frida server on the Android device."
+    echo -e "   ${GREEN}SSL Pinning Bypass [Frida]: ${WHITE}Bypasses SSL pinning using Frida."
+    echo -e "\n${WHITE}Additional Commands:\n"
+    echo -e "   ${GREEN}connect <IP>:<PORT>: ${WHITE}Connects to an Android device."
+    echo -e "   ${GREEN}disconnect <IP>:<PORT>: ${WHITE}Disconnects from an Android device."
+    echo -e "   ${GREEN}devices: ${WHITE}Lists connected Android devices."
+    echo -e "   ${GREEN}root: ${WHITE}Checks if the Android device is rooted."
+    echo -e "   ${GREEN}mac: ${WHITE}Installs requirements for macOS."
+    echo -e "   ${GREEN}linux: ${WHITE}Installs requirements for Linux."
+
+    exit 0
+fi
+
+#report issue
+if [ "$1" == "--report" ]; then
+    open https://github.com/nahid0x1/android-security-toolkit/issues
+    exit 0
+fi
+
 # Check if --install option is provided
 if [ "$1" == "--install" ]; then
     check_root
@@ -87,6 +176,14 @@ if [ $# -eq 1 ]; then
         echo "Invalid IP:PORT format. Usage: $0 <IP>:<PORT>"
         exit 1
     fi
+fi
+
+# Check if command line argument for installation is provided
+if [ "$1" == "--help" ]; then
+    brew install apktool jadx android-platform-tools openjdk
+    pip3 install frida frida-tools objection
+    echo -e "${GREEN}Requirements installed successfully for macOS."
+    exit 0
 fi
 
 # Check if an Android device is connected using ADB
